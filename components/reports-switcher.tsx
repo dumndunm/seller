@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-
+import * as React from 'react';
 import {
   CaretSortIcon,
   CheckIcon,
@@ -71,10 +70,18 @@ const groups = [
 
 type Team = (typeof groups)[number]['teams'][number];
 
-export const TeamSwitcher: FC = () => {
-  const [open, setOpen] = useState(false);
-  const [showNewTeamDialog, setShowNewTeamDialog] = useState(false);
-  const [selectedTeam, setSelectedTeam] = useState<Team>(groups[0].teams[0]);
+type PopoverTriggerProps = React.ComponentPropsWithoutRef<
+  typeof PopoverTrigger
+>;
+
+interface TeamSwitcherProps extends PopoverTriggerProps {}
+
+export function TeamSwitcher({ className }: TeamSwitcherProps) {
+  const [open, setOpen] = React.useState(false);
+  const [showNewTeamDialog, setShowNewTeamDialog] = React.useState(false);
+  const [selectedTeam, setSelectedTeam] = React.useState<Team>(
+    groups[0].teams[0]
+  );
 
   return (
     <Dialog open={showNewTeamDialog} onOpenChange={setShowNewTeamDialog}>
@@ -85,7 +92,7 @@ export const TeamSwitcher: FC = () => {
             role="combobox"
             aria-expanded={open}
             aria-label="Select a team"
-            className="w-[200px] justify-between"
+            className={cn('w-[200px] justify-between', className)}
           >
             <Avatar className="mr-2 h-5 w-5">
               <AvatarImage
@@ -120,18 +127,7 @@ export const TeamSwitcher: FC = () => {
                           alt={team.label}
                           className="grayscale"
                         />
-                        <AvatarFallback>
-                          {team.label
-                            .split(' ')
-                            .map((word) => {
-                              const head = word
-                                .at(0)
-                                ?.toUpperCase()
-                                .slice(0, 1);
-                              return head;
-                            })
-                            .join('')}
-                        </AvatarFallback>
+                        <AvatarFallback>SC</AvatarFallback>
                       </Avatar>
                       {team.label}
                       <CheckIcon
@@ -212,4 +208,4 @@ export const TeamSwitcher: FC = () => {
       </DialogContent>
     </Dialog>
   );
-};
+}
