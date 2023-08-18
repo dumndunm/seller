@@ -6,6 +6,10 @@ import { proxyServerApi } from '@/lib/api/proxy-server-api';
 import { PageContent } from '@/components/page-content';
 import { PageTitle } from '@/components/page-title';
 import { TransactionTotalsDataTable } from '@/components/transaction-totals-data-table';
+import {
+  TotalsReportPageQueries,
+  TotalsReportPageQueriesT,
+} from '@/lib/query/params';
 
 type GenerateTotalsReportPageMetadataPropsT = {
   params: RouterParamsT;
@@ -21,16 +25,14 @@ export async function generateMetadata({
   };
 }
 
-type TotalsReportPageQuerySearchParamsT = {
-  date_from: ProxyServerApiDefinitions.Paths.FinanceTransactionTotals.Get.QueryParameters['date_from'];
-  date_to: ProxyServerApiDefinitions.Paths.FinanceTransactionTotals.Get.QueryParameters['date_to'];
-  posting_number: ProxyServerApiDefinitions.Paths.FinanceTransactionTotals.Get.QueryParameters['posting_number'];
-  transaction_type: ProxyServerApiDefinitions.Paths.FinanceTransactionTotals.Get.QueryParameters['transaction_type'];
+type TotalsReportPageSearchParamsT = {
+  dateFrom: TotalsReportPageQueriesT['dateFrom'];
+  dateTo: TotalsReportPageQueriesT['dateTo'];
 };
 
 type TotalsReportPagePropsT = {
   params: RouterParamsT;
-  searchParams: TotalsReportPageQuerySearchParamsT;
+  searchParams: TotalsReportPageSearchParamsT;
 };
 
 export default async function TotalsReportPage({

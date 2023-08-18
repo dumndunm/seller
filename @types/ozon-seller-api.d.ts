@@ -93,7 +93,9 @@ namespace OzonSellerApiDefinitions {
         type RequestBody = TransactionTotalsFilters;
 
         namespace Responses {
-          type $200 = TransactionTotals;
+          type $200 = {
+            result: TransactionTotals;
+          };
         }
       }
     }

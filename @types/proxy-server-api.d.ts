@@ -2,21 +2,40 @@ namespace ProxyServerApiDefinitions {
   /**
    * YYYY-MM-DDTHH:mm:ss.sssZ
    * */
-  type DateString = string;
+  type DateString = DateISOStringT;
+
+  /**
+   * ```
+   * all — все,
+   * orders — заказы,
+   * returns — возвраты и отмены,
+   * services — сервисные сборы,
+   * compensation — компенсация,
+   * transferDelivery — стоимость доставки,
+   * other — прочее.
+   * ```
+   */
+  type TransactionType =
+    | 'all'
+    | 'orders'
+    | 'returns'
+    | 'services'
+    | 'compensation'
+    | 'transferDelivery'
+    | 'other';
 
   namespace Paths {
     namespace FinanceTransactionTotals {
       namespace Get {
         type QueryParameters = {
-          date_from: DateString;
-          date_to: DateString;
-          posting_number: string;
-          transaction_type: OzonSellerApiDefinitions.TransactionType;
+          dateFrom: DateString;
+          dateTo: DateString;
+          postingNumber: string;
+          transactionType: TransactionType;
         };
 
         namespace Responses {
-          type $200 =
-            OzonSellerApiDefinitions.Paths.FinanceTransactionTotals.Post.Responses.$200;
+          type $200 = OzonSellerApiDefinitions.TransactionTotals;
         }
       }
     }

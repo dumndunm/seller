@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { useQueryParams, StringParam, createEnumParam } from 'use-query-params';
+import { useQueryParams, StringParam } from 'use-query-params';
 
 import {
   ColumnFiltersState,
@@ -26,17 +26,14 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import {
+  type DateRangeT,
   CalendarDateRangePicker,
-  DateRangeT,
 } from '@/components/date-range-picker';
 import { SearchInput } from '@/components/search-input';
 
-import { columns } from './columns';
+import { TotalsReportPageQueries } from '@/lib/query/params';
 
-export const TotalsTableQueries = {
-  fromDate: 'fromDate',
-  toDate: 'toDate',
-};
+import { columns } from './columns';
 
 type TransactionTotalsDataTablePropsT = {
   data: ProxyServerApiDefinitions.Paths.FinanceTransactionTotals.Get.Responses.$200;
@@ -73,15 +70,15 @@ export const TransactionTotalsDataTable: FC<
   });
 
   const [_, setQueries] = useQueryParams({
-    [TotalsTableQueries.fromDate]: StringParam,
-    [TotalsTableQueries.toDate]: StringParam,
+    [TotalsReportPageQueries.dateFrom]: StringParam,
+    [TotalsReportPageQueries.dateTo]: StringParam,
   });
 
   const handleChangeDateRange = useCallback((dateRange: DateRangeT) => {
     setQueries(
       {
-        [TotalsTableQueries.fromDate]: dateRange.from,
-        [TotalsTableQueries.toDate]: dateRange.to,
+        [TotalsReportPageQueries.dateFrom]: dateRange.from,
+        [TotalsReportPageQueries.dateTo]: dateRange.to,
       },
       'replace'
     );
@@ -90,9 +87,7 @@ export const TransactionTotalsDataTable: FC<
   return (
     <div className="space-y-4">
       <div className="flex items-center space-x-2">
-        <CalendarDateRangePicker
-          onChangeDateRange={handleChangeDateRange}
-        />
+        <CalendarDateRangePicker onChangeDateRange={handleChangeDateRange} />
         <SearchInput />
       </div>
       <div className="rounded-md border">

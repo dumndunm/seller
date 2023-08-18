@@ -9,3 +9,5 @@ export type ApiResponseT<D = any, E = any> =
       error: AnyRequestErrorT<E>;
       data: null;
     };
+
+export type

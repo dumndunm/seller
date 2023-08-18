@@ -69,19 +69,18 @@ class ProxyServerApi {
   getFinanceTransactionTotalsReport = async (
     query: GetFinanceTransactionTotalsReportQueryT
   ): Promise<GetFinanceTransactionTotalsReportResultT> => {
-    const { error, data } = await this.doFetch<{
-      result: GetFinanceTransactionTotalsReportResultT;
-    }>({
-      method: HTTPMethodEnum.get,
-      url: '/reports/finance/totals',
-      query,
-    });
+    const { error, data } =
+      await this.doFetch<GetFinanceTransactionTotalsReportResultT>({
+        method: HTTPMethodEnum.get,
+        url: '/reports/finance/totals',
+        query,
+      });
 
     if (error) {
       throw new Error(error.message);
     }
 
-    return data.result;
+    return data;
   };
 }
 
