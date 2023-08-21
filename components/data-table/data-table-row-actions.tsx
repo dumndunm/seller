@@ -1,7 +1,8 @@
 'use client';
 
+import type { Row } from '@tanstack/react-table';
+
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
-import { Row } from '@tanstack/react-table';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -20,15 +21,15 @@ import {
 
 import { labels } from './data/data';
 
-interface DataTableRowActionsProps<TData> {
-  row: Row<TData>;
-}
+type DataTableRowActionsPropsT<TableDataShapeT> = {
+  row: Row<TableDataShapeT>;
+};
 
-export function DataTableRowActions<TData>({
+export const DataTableRowActions = <
+  TableDataShapeT extends DefaultObjectShapeT
+>({
   row,
-}: DataTableRowActionsProps<TData>) {
-  const task = row.original;
-
+}: DataTableRowActionsPropsT<TableDataShapeT>) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -48,7 +49,7 @@ export function DataTableRowActions<TData>({
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup value={(task as any).label!}>
+            <DropdownMenuRadioGroup value={(row.original as any).label!}>
               {labels.map((label) => (
                 <DropdownMenuRadioItem key={label.value} value={label.value}>
                   {label.label}
@@ -65,4 +66,4 @@ export function DataTableRowActions<TData>({
       </DropdownMenuContent>
     </DropdownMenu>
   );
-}
+};

@@ -4,4 +4,4 @@ const reducers = {
   [rootApiSlice.reducerPath]: rootApiSlice.reducer,
 };
 
-export default reducers;
+export { reducers };

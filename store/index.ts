@@ -1,6 +1,6 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import reducers from '@/store/reducers';
-import { rootApiSlice } from '@/store/api/reducers';
+import { reducers } from './reducers';
+import { rootApiSlice } from './api/reducers';
 
 const reducer = combineReducers(reducers);
 
@@ -17,5 +17,5 @@ const store = configureStore({
   devTools: process.env.NODE_ENV !== 'production',
 });
 
-export { store };
 export type RootStateT = ReturnType<typeof reducer>;
+export { store };

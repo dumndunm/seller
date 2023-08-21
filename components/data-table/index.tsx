@@ -1,53 +1,78 @@
 'use client';
 
-import * as React from 'react';
+import type * as TanStackReactTable from '@tanstack/react-table';
+
+import { useState } from 'react';
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
+  useReactTable,
   flexRender,
   getCoreRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
 } from '@tanstack/react-table';
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-
-import { DataTablePagination } from './data-table-pagination';
+// prettier-ignore
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { DataTableToolbar } from './data-table-toolbar';
+import { DataTablePagination } from './data-table-pagination';
+import { useI18n } from '@/lib/i18n/provider';
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-}
+export type ColumnDefMetaT = {
+  title: I18nStringT;
+  shortTitle: I18nStringT;
+};
 
-export function DataTable<TData, TValue>({
+type ColumnIdT = string;
+
+type FacetedFilterOptionT = {
+  value: string;
+  label: I18nStringT;
+  icon: ComponentType<{ className?: string }>;
+};
+
+type FacetedFilterDefinitionT = {
+  columnId: ColumnIdT;
+  title: I18nStringT;
+  options: Array<FacetedFilterOptionT>;
+};
+
+export type DataTableMetaT = {
+  searchBy?: Array<ColumnIdT>;
+  facetedBy?: Array<FacetedFilterDefinitionT>;
+  allowRowsSelections?: boolean;
+  allowPagination?: boolean;
+};
+
+type DataTablePropsT<TableDataShapeT> = {
+  columns: Array<TanStackReactTable.ColumnDef<TableDataShapeT>>;
+  data: Array<TableDataShapeT>;
+  meta?: DataTableMetaT;
+};
+
+export const DataTable = <TableDataShapeT extends DefaultObjectShapeT>({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
-  const [rowSelection, setRowSelection] = React.useState({});
+  meta,
+}: DataTablePropsT<TableDataShapeT>) => {
+  const i18n = useI18n();
+
+  const [rowSelection, setRowSelection] =
+    useState<TanStackReactTable.RowSelectionState>({});
+
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+    useState<TanStackReactTable.VisibilityState>({});
+
+  const [columnFilters, setColumnFilters] =
+    useState<TanStackReactTable.ColumnFiltersState>([]);
+
+  const [sorting, setSorting] = useState<TanStackReactTable.SortingState>([]);
 
   const table = useReactTable({
-    data,
     columns,
+    data,
+    meta,
     state: {
       sorting,
       columnVisibility,
@@ -56,9 +81,9 @@ export function DataTable<TData, TValue>({
     },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
+    onColumnFiltersChange: setColumnFilters,
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -113,14 +138,16 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  {i18n.common.noResults}
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
-      {/* <DataTablePagination table={table} /> */}
+      {(meta?.allowRowsSelections || meta?.allowPagination) && (
+        <DataTablePagination table={table} />
+      )}
     </div>
   );
-}
+};

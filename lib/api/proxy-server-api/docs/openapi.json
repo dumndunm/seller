@@ -1,0 +1,1113 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "",
+    "version": 1,
+    "description": ""
+  },
+  "paths": {
+    "/reports/finance/realization": {
+      "get": {
+        "summary": "Отчёт о реализации товаров",
+        "description": "Отчёт о реализации доставленных и возвращённых товаров за месяц. Отмены и невыкупы не включаются.\n\nОтчёт придёт не позднее 5-го числа следующего месяца.\n\n[Подробнее об отчёте в Базе знаний продавца](https://seller-edu.ozon.ru/docs/finances-documents/calculations-documents/otchet-o-realizacii-tovarov.html)\n",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "date",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Отчётный период в формате `YYYY-MM`."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Отчёт о реализации",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetFinanceRealizationReportResponse"
+                },
+                "example": {
+                  "header": {
+                    "doc_date": "2022-09-22",
+                    "num": "string",
+                    "start_date": "2022-09-02",
+                    "stop_date": "2022-09-22",
+                    "contract_date": "2022-09-02",
+                    "contract_num": "string",
+                    "payer_name": "string",
+                    "payer_inn": "string",
+                    "payer_kpp": "string",
+                    "rcv_name": "string",
+                    "rcv_inn": "string",
+                    "rcv_kpp": "string",
+                    "doc_amount": "string",
+                    "vat_amount": "string",
+                    "currency_code": "string"
+                  },
+                  "rows": [
+                    {
+                      "row_number": 0,
+                      "product_id": 0,
+                      "product_name": "string",
+                      "offer_id": "string",
+                      "barcode": "string",
+                      "price": 0,
+                      "commission_percent": 0,
+                      "price_sale": 0,
+                      "sale_qty": 0,
+                      "sale_amount": 0,
+                      "sale_discount": 0,
+                      "sale_commission": 0,
+                      "sale_price_seller": 0,
+                      "return_sale": 0,
+                      "return_qty": 0,
+                      "return_amount": 0,
+                      "return_discount": 0,
+                      "return_commission": 0,
+                      "return_price_seller": 0
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Неверный параметр",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Доступ запрещён",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ответ не найден",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Конфликт запроса",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reports/finance/transaction/list": {
+      "get": {
+        "summary": "Список транзакций",
+        "description": "Возвращает подробную информацию по всем начислениям. Максимальный период, за который можно получить информацию в одном запросе — 1 месяц.\n\nЕсли в запросе не указывать `posting_number`, то в ответе будут все отправления за указанный период или отправления определённого типа.\n",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "startDate",
+            "required": true,
+            "schema": {
+              "format": "date-time",
+              "type": "string",
+              "description": "Начало периода.\n\nФормат: `YYYY-MM-DDTHH:mm:ss.sssZ`.<br>\nПример: `2019-11-25T10:43:06.51`.\n"
+            }
+          },
+          {
+            "in": "query",
+            "name": "endDate",
+            "required": true,
+            "schema": {
+              "format": "date-time",
+              "type": "string",
+              "description": "Начало периода.\n\nФормат: `YYYY-MM-DDTHH:mm:ss.sssZ`.<br>\nПример: `2019-11-25T10:43:06.51`.\n"
+            }
+          },
+          {
+            "in": "query",
+            "name": "postingNumber",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Номер отправления."
+            }
+          },
+          {
+            "in": "query",
+            "name": "transactionType",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/TransactionType"
+            }
+          },
+          {
+            "in": "query",
+            "name": "operationType",
+            "required": false,
+            "schema": {
+              "items": {
+                "$ref": "#/components/schemas/OperationType"
+              },
+              "type": "array",
+              "description": "Тип операции:\n  - `ClientReturnAgentOperation` — получение возврата, отмены, невыкупа от покупателя;\n  - `MarketplaceMarketingActionCostOperation` — услуги продвижения товаров;\n  - `MarketplaceSaleReviewsOperation` — приобретение отзывов на платформе;\n  - `MarketplaceSellerCompensationOperation` — прочие компенсации;\n  - `OperationAgentDeliveredToCustomer` — доставка покупателю;\n  - `OperationAgentDeliveredToCustomerCanceled` — доставка покупателю — исправленное начисление;\n  - `OperationAgentStornoDeliveredToCustomer` — доставка покупателю — отмена начисления;\n  - `OperationClaim` — начисление по претензии;\n  - `OperationCorrectionSeller` — инвентаризация взаиморасчетов;\n  - `OperationDefectiveWriteOff` — компенсация за повреждённый на складе товар;\n  - `OperationItemReturn` — доставка и обработка возврата, отмены, невыкупа;\n  - `OperationLackWriteOff` — компенсация за утерянный на складе товар;\n  - `OperationMarketplaceCrossDockServiceWriteOff` — доставка товаров на склад Ozon (кросс-докинг);\n  - `OperationMarketplaceServiceStorage` — услуга размещения товаров на складе;\n  - `OperationSetOff` — взаимозачёт с другими договорами контрагента;\n  - `MarketplaceSellerReexposureDeliveryReturnOperation` — перечисление за доставку от покупателя;\n  - `OperationReturnGoodsFBSofRMS` — доставка и обработка возврата, отмены, невыкупа;\n  - `ReturnAgentOperationRFBS` — возврат перечисления за доставку покупателю;\n  - `MarketplaceSellerShippingCompensationReturnOperation` — компенсация перечисления за доставку;\n  - `OperationMarketplaceServicePremiumCashback` — услуга продвижения Premium;\n  - `MarketplaceServicePremiumPromotion` — услуга продвижения Premium, фиксированная комиссия;\n  - `MarketplaceRedistributionOfAcquiringOperation` — оплата эквайринга;\n  - `MarketplaceReturnStorageServiceAtThePickupPointFbsItem` — краткосрочное размещение возврата FBS;\n  - `MarketplaceReturnStorageServiceInTheWarehouseFbsItem` — долгосрочное размещение возврата FBS;\n  - `MarketplaceServiceItemDeliveryKGT` — доставка КГТ;\n  - `MarketplaceServiceItemDirectFlowLogistic` — логистика;\n  - `MarketplaceServiceItemReturnFlowLogistic` — обратная логистика;\n  - `MarketplaceServicePremiumCashbackIndividualPoints` — услуга продвижения «Бонусы продавца»;\n  - `OperationMarketplaceWithHoldingForUndeliverableGoods` — удержание за недовложение товара.\n"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Список транзакций",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetFinanceTransactionListReportResponse"
+                },
+                "example": {
+                  "operations": [
+                    {
+                      "operation_id": 11401182187840,
+                      "operation_type": "MarketplaceMarketingActionCostOperation",
+                      "operation_date": "2021-11-01 00:00:00",
+                      "operation_type_name": "Услуги продвижения товаров",
+                      "delivery_charge": 0,
+                      "return_delivery_charge": 0,
+                      "accruals_for_sale": 0,
+                      "sale_commission": 0,
+                      "amount": -6.46,
+                      "type": "services",
+                      "posting": {
+                        "delivery_schema": "",
+                        "order_date": "",
+                        "posting_number": "",
+                        "warehouse_id": 0
+                      },
+                      "items": [],
+                      "services": []
+                    }
+                  ],
+                  "page_count": 1,
+                  "row_count": 355
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Неверный параметр",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Доступ запрещён",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ответ не найден",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Конфликт запроса",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reports/finance/transaction/list/all": {
+      "get": {
+        "summary": "Список транзакций",
+        "description": "Возвращает подробную информацию по всем начислениям. Максимальный период, за который можно получить информацию в одном запросе — 1 месяц.\n\nЕсли в запросе не указывать `posting_number`, то в ответе будут все отправления за указанный период или отправления определённого типа.\n",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "startDate",
+            "required": true,
+            "schema": {
+              "format": "date-time",
+              "type": "string",
+              "description": "Начало периода.\n\nФормат: `YYYY-MM-DDTHH:mm:ss.sssZ`.<br>\nПример: `2019-11-25T10:43:06.51`.\n"
+            }
+          },
+          {
+            "in": "query",
+            "name": "endDate",
+            "required": true,
+            "schema": {
+              "format": "date-time",
+              "type": "string",
+              "description": "Начало периода.\n\nФормат: `YYYY-MM-DDTHH:mm:ss.sssZ`.<br>\nПример: `2019-11-25T10:43:06.51`.\n"
+            }
+          },
+          {
+            "in": "query",
+            "name": "postingNumber",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Номер отправления."
+            }
+          },
+          {
+            "in": "query",
+            "name": "transactionType",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/TransactionType"
+            }
+          },
+          {
+            "in": "query",
+            "name": "operationType",
+            "required": false,
+            "schema": {
+              "items": {
+                "$ref": "#/components/schemas/OperationType"
+              },
+              "type": "array",
+              "description": "Тип операции:\n  - `ClientReturnAgentOperation` — получение возврата, отмены, невыкупа от покупателя;\n  - `MarketplaceMarketingActionCostOperation` — услуги продвижения товаров;\n  - `MarketplaceSaleReviewsOperation` — приобретение отзывов на платформе;\n  - `MarketplaceSellerCompensationOperation` — прочие компенсации;\n  - `OperationAgentDeliveredToCustomer` — доставка покупателю;\n  - `OperationAgentDeliveredToCustomerCanceled` — доставка покупателю — исправленное начисление;\n  - `OperationAgentStornoDeliveredToCustomer` — доставка покупателю — отмена начисления;\n  - `OperationClaim` — начисление по претензии;\n  - `OperationCorrectionSeller` — инвентаризация взаиморасчетов;\n  - `OperationDefectiveWriteOff` — компенсация за повреждённый на складе товар;\n  - `OperationItemReturn` — доставка и обработка возврата, отмены, невыкупа;\n  - `OperationLackWriteOff` — компенсация за утерянный на складе товар;\n  - `OperationMarketplaceCrossDockServiceWriteOff` — доставка товаров на склад Ozon (кросс-докинг);\n  - `OperationMarketplaceServiceStorage` — услуга размещения товаров на складе;\n  - `OperationSetOff` — взаимозачёт с другими договорами контрагента;\n  - `MarketplaceSellerReexposureDeliveryReturnOperation` — перечисление за доставку от покупателя;\n  - `OperationReturnGoodsFBSofRMS` — доставка и обработка возврата, отмены, невыкупа;\n  - `ReturnAgentOperationRFBS` — возврат перечисления за доставку покупателю;\n  - `MarketplaceSellerShippingCompensationReturnOperation` — компенсация перечисления за доставку;\n  - `OperationMarketplaceServicePremiumCashback` — услуга продвижения Premium;\n  - `MarketplaceServicePremiumPromotion` — услуга продвижения Premium, фиксированная комиссия;\n  - `MarketplaceRedistributionOfAcquiringOperation` — оплата эквайринга;\n  - `MarketplaceReturnStorageServiceAtThePickupPointFbsItem` — краткосрочное размещение возврата FBS;\n  - `MarketplaceReturnStorageServiceInTheWarehouseFbsItem` — долгосрочное размещение возврата FBS;\n  - `MarketplaceServiceItemDeliveryKGT` — доставка КГТ;\n  - `MarketplaceServiceItemDirectFlowLogistic` — логистика;\n  - `MarketplaceServiceItemReturnFlowLogistic` — обратная логистика;\n  - `MarketplaceServicePremiumCashbackIndividualPoints` — услуга продвижения «Бонусы продавца»;\n  - `OperationMarketplaceWithHoldingForUndeliverableGoods` — удержание за недовложение товара.\n"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Список транзакций",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetFinanceTransactionListAllReportResponse"
+                },
+                "example": {
+                  "operations": [
+                    {
+                      "operation_id": 11401182187840,
+                      "operation_type": "MarketplaceMarketingActionCostOperation",
+                      "operation_date": "2021-11-01 00:00:00",
+                      "operation_type_name": "Услуги продвижения товаров",
+                      "delivery_charge": 0,
+                      "return_delivery_charge": 0,
+                      "accruals_for_sale": 0,
+                      "sale_commission": 0,
+                      "amount": -6.46,
+                      "type": "services",
+                      "posting": {
+                        "delivery_schema": "",
+                        "order_date": "",
+                        "posting_number": "",
+                        "warehouse_id": 0
+                      },
+                      "items": [],
+                      "services": []
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Неверный параметр",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Доступ запрещён",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ответ не найден",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Конфликт запроса",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reports/finance/transaction/totals": {
+      "get": {
+        "summary": "Суммы транзакций",
+        "description": "Возвращает итоговые суммы по транзакциям за указанный период.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "startDate",
+            "required": true,
+            "schema": {
+              "format": "date-time",
+              "type": "string",
+              "description": "Начало периода.\n\nФормат: `YYYY-MM-DDTHH:mm:ss.sssZ`.<br>\nПример: `2019-11-25T10:43:06.51`.\n"
+            }
+          },
+          {
+            "in": "query",
+            "name": "endDate",
+            "required": true,
+            "schema": {
+              "format": "date-time",
+              "type": "string",
+              "description": "Начало периода.\n\nФормат: `YYYY-MM-DDTHH:mm:ss.sssZ`.<br>\nПример: `2019-11-25T10:43:06.51`.\n"
+            }
+          },
+          {
+            "in": "query",
+            "name": "postingNumber",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Номер отправления."
+            }
+          },
+          {
+            "in": "query",
+            "name": "transactionType",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/TransactionType"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Суммы транзакций",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetFinanceTransactionTotalsReportResponse"
+                },
+                "example": {
+                  "accruals_for_sale": 96647.58,
+                  "sale_commission": -11456.65,
+                  "processing_and_delivery": -24405.68,
+                  "refunds_and_cancellations": -330,
+                  "services_amount": -1307.57,
+                  "compensation_amount": 0,
+                  "money_transfer": 0,
+                  "others_amount": 113.05
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Неверный параметр",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Доступ запрещён",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ответ не найден",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Конфликт запроса",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reports/finance/overview": {
+      "get": {
+        "summary": "Кастомный отчет с чистой прибылью",
+        "description": "Возвращает итоговую прибыль и связанные с этим данные.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "startDate",
+            "required": true,
+            "schema": {
+              "format": "date-time",
+              "type": "string",
+              "description": "Начало периода.\n\nФормат: `YYYY-MM-DDTHH:mm:ss.sssZ`.<br>\nПример: `2019-11-25T10:43:06.51`.\n"
+            }
+          },
+          {
+            "in": "query",
+            "name": "endDate",
+            "required": true,
+            "schema": {
+              "format": "date-time",
+              "type": "string",
+              "description": "Начало периода.\n\nФормат: `YYYY-MM-DDTHH:mm:ss.sssZ`.<br>\nПример: `2019-11-25T10:43:06.51`.\n"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Отчет с чистой прибылью",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetFinanceOverviewReportResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Неверный параметр",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Доступ запрещён",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ответ не найден",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Конфликт запроса",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ProtobufAny": {
+        "type": "object",
+        "properties": {
+          "typeUrl": {
+            "type": "string",
+            "description": "Тип протокола передачи данных."
+          },
+          "value": {
+            "type": "string",
+            "format": "byte",
+            "description": "Значение ошибки."
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "format": "int32",
+            "description": "Код ошибки."
+          },
+          "details": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProtobufAny"
+            },
+            "description": "Дополнительная информация об ошибке."
+          },
+          "message": {
+            "type": "string",
+            "description": "Описание ошибки."
+          }
+        }
+      },
+      "TransactionType": {
+        "type": "string",
+        "enum": [
+          "all",
+          "orders",
+          "returns",
+          "services",
+          "compensation",
+          "transferDelivery",
+          "other"
+        ],
+        "description": "Тип начисления:\n  - `all` — все,\n  - `orders` — заказы,\n  - `returns` — возвраты и отмены,\n  - `services` — сервисные сборы,\n  - `compensation` — компенсация,\n  - `transferDelivery` — стоимость доставки,\n  - `other` — прочее.\n\nНекоторые операции могут быть разделены во времени. Например, при приёме возврата от покупателя списывается стоимость товара и возвращается комиссия, а когда товар возвращается на склад, взимается стоимость услуга по обработке возврата.\n"
+      },
+      "OperationType": {
+        "type": "string",
+        "enum": [
+          "ClientReturnAgentOperation",
+          "MarketplaceMarketingActionCostOperation",
+          "MarketplaceSaleReviewsOperation",
+          "MarketplaceSellerCompensationOperation",
+          "OperationAgentDeliveredToCustomer",
+          "OperationAgentDeliveredToCustomerCanceled",
+          "OperationAgentStornoDeliveredToCustomer",
+          "OperationClaim",
+          "OperationCorrectionSeller",
+          "OperationDefectiveWriteOff",
+          "OperationItemReturn",
+          "OperationLackWriteOff",
+          "OperationMarketplaceCrossDockServiceWriteOff",
+          "OperationMarketplaceServiceStorage",
+          "OperationSetOff",
+          "MarketplaceSellerReexposureDeliveryReturnOperation",
+          "OperationReturnGoodsFBSofRMS",
+          "ReturnAgentOperationRFBS",
+          "MarketplaceSellerShippingCompensationReturnOperation",
+          "OperationMarketplaceServicePremiumCashback",
+          "MarketplaceServicePremiumPromotion",
+          "MarketplaceRedistributionOfAcquiringOperation",
+          "MarketplaceReturnStorageServiceAtThePickupPointFbsItem",
+          "MarketplaceReturnStorageServiceInTheWarehouseFbsItem",
+          "MarketplaceServiceItemDeliveryKGT",
+          "MarketplaceServiceItemDirectFlowLogistic",
+          "MarketplaceServiceItemReturnFlowLogistic",
+          "MarketplaceServicePremiumCashbackIndividualPoints",
+          "OperationMarketplaceWithHoldingForUndeliverableGoods"
+        ],
+        "description": "Тип операции:\n  - `ClientReturnAgentOperation` — получение возврата, отмены, невыкупа от покупателя;\n  - `MarketplaceMarketingActionCostOperation` — услуги продвижения товаров;\n  - `MarketplaceSaleReviewsOperation` — приобретение отзывов на платформе;\n  - `MarketplaceSellerCompensationOperation` — прочие компенсации;\n  - `OperationAgentDeliveredToCustomer` — доставка покупателю;\n  - `OperationAgentDeliveredToCustomerCanceled` — доставка покупателю — исправленное начисление;\n  - `OperationAgentStornoDeliveredToCustomer` — доставка покупателю — отмена начисления;\n  - `OperationClaim` — начисление по претензии;\n  - `OperationCorrectionSeller` — инвентаризация взаиморасчетов;\n  - `OperationDefectiveWriteOff` — компенсация за повреждённый на складе товар;\n  - `OperationItemReturn` — доставка и обработка возврата, отмены, невыкупа;\n  - `OperationLackWriteOff` — компенсация за утерянный на складе товар;\n  - `OperationMarketplaceCrossDockServiceWriteOff` — доставка товаров на склад Ozon (кросс-докинг);\n  - `OperationMarketplaceServiceStorage` — услуга размещения товаров на складе;\n  - `OperationSetOff` — взаимозачёт с другими договорами контрагента;\n  - `MarketplaceSellerReexposureDeliveryReturnOperation` — перечисление за доставку от покупателя;\n  - `OperationReturnGoodsFBSofRMS` — доставка и обработка возврата, отмены, невыкупа;\n  - `ReturnAgentOperationRFBS` — возврат перечисления за доставку покупателю;\n  - `MarketplaceSellerShippingCompensationReturnOperation` — компенсация перечисления за доставку;\n  - `OperationMarketplaceServicePremiumCashback` — услуга продвижения Premium;\n  - `MarketplaceServicePremiumPromotion` — услуга продвижения Premium, фиксированная комиссия;\n  - `MarketplaceRedistributionOfAcquiringOperation` — оплата эквайринга;\n  - `MarketplaceReturnStorageServiceAtThePickupPointFbsItem` — краткосрочное размещение возврата FBS;\n  - `MarketplaceReturnStorageServiceInTheWarehouseFbsItem` — долгосрочное размещение возврата FBS;\n  - `MarketplaceServiceItemDeliveryKGT` — доставка КГТ;\n  - `MarketplaceServiceItemDirectFlowLogistic` — логистика;\n  - `MarketplaceServiceItemReturnFlowLogistic` — обратная логистика;\n  - `MarketplaceServicePremiumCashbackIndividualPoints` — услуга продвижения «Бонусы продавца»;\n  - `OperationMarketplaceWithHoldingForUndeliverableGoods` — удержание за недовложение товара.\n"
+      },
+      "FinanceRealizationReportHeader": {
+        "type": "object",
+        "properties": {
+          "num": {
+            "type": "string",
+            "description": "Номер отчёта о реализации."
+          },
+          "doc_date": {
+            "type": "string",
+            "description": "Дата формирования отчёта."
+          },
+          "contract_date": {
+            "type": "string",
+            "description": "Дата заключения договора оферты."
+          },
+          "contract_num": {
+            "type": "string",
+            "description": "Номер договора оферты."
+          },
+          "currency_code": {
+            "type": "string",
+            "description": "Валюта ваших цен."
+          },
+          "doc_amount": {
+            "type": "number",
+            "format": "double",
+            "description": "Сумма к начислению."
+          },
+          "vat_amount": {
+            "type": "number",
+            "format": "double",
+            "description": "Сумма к начислению с НДС."
+          },
+          "payer_inn": {
+            "type": "string",
+            "description": "ИНН плательщика."
+          },
+          "payer_kpp": {
+            "type": "string",
+            "description": "КПП плательщика."
+          },
+          "payer_name": {
+            "type": "string",
+            "description": "Название плательщика."
+          },
+          "rcv_inn": {
+            "type": "string",
+            "description": "ИНН получателя."
+          },
+          "rcv_kpp": {
+            "type": "string",
+            "description": "КПП получателя."
+          },
+          "rcv_name": {
+            "type": "string",
+            "description": "Название получателя."
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Начало периода в отчёте."
+          },
+          "stop_date": {
+            "type": "string",
+            "description": "Конец периода в отчёте."
+          }
+        }
+      },
+      "FinanceRealizationReportRow": {
+        "type": "object",
+        "properties": {
+          "row_number": {
+            "type": "number",
+            "format": "int32",
+            "description": "Номер строки в отчёте."
+          },
+          "product_id": {
+            "type": "number",
+            "format": "int64",
+            "description": "Идентификатор товара."
+          },
+          "product_name": {
+            "type": "string",
+            "description": "Наименование товара."
+          },
+          "barcode": {
+            "type": "string",
+            "description": "Штрихкод товара."
+          },
+          "offer_id": {
+            "type": "string",
+            "description": "Код товара продавца — артикул."
+          },
+          "commission_percent": {
+            "type": "number",
+            "format": "double",
+            "description": "Комиссия за продажу по категории."
+          },
+          "price": {
+            "type": "number",
+            "format": "double",
+            "description": "Цена продавца с учётом его скидки."
+          },
+          "price_sale": {
+            "type": "number",
+            "format": "double",
+            "description": "Цена реализации — цена, по которой покупатель приобрёл товар. \n\nДля реализованных товаров.\n"
+          },
+          "sale_amount": {
+            "type": "number",
+            "format": "double",
+            "description": "Реализовано на сумму.\n\nСтоимость реализованного товара с учётом количества и региональных коэффициентов. Расчёт осуществляется по цене `sale_amount`.\n"
+          },
+          "sale_commission": {
+            "type": "number",
+            "format": "double",
+            "description": "Комиссия за реализованный товар с учётом скидок и наценки."
+          },
+          "sale_discount": {
+            "type": "number",
+            "format": "double",
+            "description": "Доплата за счёт Ozon.\n\nСумма, которую Ozon компенсирует продавцу, если скидка Ozon больше или равна комиссии за продажу.\n"
+          },
+          "sale_price_seller": {
+            "type": "number",
+            "format": "double",
+            "description": "Итого к начислению за реализованный товар. \n\nСумма после вычета комиссии за продажу, применения скидок и установленных наценок.\n"
+          },
+          "sale_qty": {
+            "type": "number",
+            "format": "int32",
+            "description": "Количество товара, реализованного по цене `price_sale`."
+          },
+          "return_sale": {
+            "type": "number",
+            "format": "double",
+            "description": "Цена реализации — цена, по которой покупатель приобрёл товар. \n\nДля возвращённых товаров.\n"
+          },
+          "return_amount": {
+            "type": "number",
+            "format": "double",
+            "description": "Возвращено на сумму. \n\nСтоимость возвращённого товара с учётом количества и региональных коэффициентов. Расчёт осуществляется по цене `return_sale`.\n"
+          },
+          "return_commission": {
+            "type": "number",
+            "format": "double",
+            "description": "Комиссия с учётом количества товара, предоставленных скидок и установленных наценок. Ozon компенсирует её в случае возврата товара."
+          },
+          "return_discount": {
+            "type": "number",
+            "format": "double",
+            "description": "Доплата за счёт Ozon.\n\nСумма скидки за счёт Ozon по возвращённому товару, которую Ozon компенсирует продавцу, если скидка Ozon больше или равна комиссии за продажу.\n"
+          },
+          "return_price_seller": {
+            "type": "number",
+            "format": "double",
+            "description": "Итого возвращено. \n\nСумма, начисляемая продавцу за возвращённый товар после вычета комиссии за продажу, применения скидок и установленных наценок.\n"
+          },
+          "return_qty": {
+            "type": "number",
+            "format": "int32",
+            "description": "Количество возвращённого товара."
+          }
+        }
+      },
+      "FinanceRealizationReport": {
+        "type": "object",
+        "properties": {
+          "header": {
+            "description": "Титульный лист отчёта.",
+            "$ref": "#/components/schemas/FinanceRealizationReportHeader"
+          },
+          "rows": {
+            "description": "Таблица отчёта.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FinanceRealizationReportRow"
+            }
+          }
+        }
+      },
+      "GetFinanceRealizationReportResponse": {
+        "$ref": "#/components/schemas/FinanceRealizationReport"
+      },
+      "OperationItem": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Название товара."
+          },
+          "sku": {
+            "format": "int64",
+            "type": "number",
+            "description": "Идентификатор товара в системе Ozon."
+          }
+        }
+      },
+      "OperationPosting": {
+        "type": "object",
+        "properties": {
+          "delivery_schema": {
+            "type": "string",
+            "description": "Схема доставки:\n  - `FBO` — доставка со склада Ozon,\n  - `FBS` — доставка со своего склада,\n  - `RFBS` — доставка по выбору продавца,\n  - `Crossborder` — доставка из-за рубежа.\n"
+          },
+          "order_date": {
+            "type": "string",
+            "description": "Дата принятия отправления в обработку."
+          },
+          "posting_number": {
+            "type": "string",
+            "description": "Номер отправления."
+          },
+          "warehouse_id": {
+            "format": "int64",
+            "type": "number",
+            "description": "Идентификатор склада."
+          }
+        },
+        "description": "Информация об отправлении."
+      },
+      "OperationService": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Название услуги:\n  - `MarketplaceNotDeliveredCostItem` — возврат невостребованного товара от покупателя на склад.\n  - `MarketplaceReturnAfterDeliveryCostItem` — возврат от покупателя на склад после доставки.\n  - `MarketplaceDeliveryCostItem` — доставка товара до покупателя.\n  - `MarketplaceSaleReviewsItem` — приобретение отзывов на платформе.\n  - `ItemAdvertisementForSupplierLogistic` — доставка товаров на склад Ozon — кросс-докинг.\n  - `MarketplaceServiceStorageItem` — размещения товаров.\n  - `MarketplaceMarketingActionCostItem` — продвижение товаров.\n  - `MarketplaceServiceItemInstallment` — продвижениe и продажа в рассрочку.\n  - `MarketplaceServiceItemMarkingItems` — обязательная маркировка товаров.\n  - `MarketplaceServiceItemFlexiblePaymentSchedule` — гибкий график выплат.\n  - `MarketplaceServiceItemReturnFromStock` — комплектация товаров для вывоза продавцом.\n  - `ItemAdvertisementForSupplierLogisticSeller` — транспортно-экспедиционные услуги.\n  - `MarketplaceServiceItemDelivToCustomer` — последняя миля.\n  - `MarketplaceServiceItemDirectFlowTrans` — магистраль.\n  - `MarketplaceServiceItemDropoffFF` — обработка отправления.\n  - `MarketplaceServiceItemDropoffPVZ` — обработка отправления.\n  - `MarketplaceServiceItemDropoffSC` — обработка отправления.\n  - `MarketplaceServiceItemFulfillment` — сборка заказа.\n  - `MarketplaceServiceItemPickup` — выезд транспортного средства по адресу продавца для забора отправлений — Pick-up.\n  - `MarketplaceServiceItemReturnAfterDelivToCustomer` — обработка возврата.\n  - `MarketplaceServiceItemReturnFlowTrans` — обратная магистраль.\n  - `MarketplaceServiceItemReturnNotDelivToCustomer` — обработка отмен.\n  - `MarketplaceServiceItemReturnPartGoodsCustomer` — обработка невыкупа.\n  - `MarketplaceRedistributionOfAcquiringOperation` — оплата эквайринга.\n  - `MarketplaceReturnStorageServiceAtThePickupPointFbsItem` — краткосрочное размещение возврата FBS.\n  - `MarketplaceReturnStorageServiceInTheWarehouseFbsItem` — долгосрочное размещение возврата FBS.\n  - `MarketplaceServiceItemDeliveryKGT` — доставка крупногабаритного товара (КГТ).\n  - `MarketplaceServiceItemDirectFlowLogistic` — логистика.\n  - `MarketplaceServiceItemReturnFlowLogistic` — обратная логистика.\n  - `MarketplaceServicePremiumCashbackIndividualPoints` — услуга продвижения «Бонусы продавца».\n  - `MarketplaceServicePremiumPromotion` — услуга продвижение Premium, фиксированная комиссия.\n  - `OperationMarketplaceWithHoldingForUndeliverableGoods` — удержание за недовложение товара.\n"
+          },
+          "price": {
+            "format": "double",
+            "type": "number",
+            "description": "Цена."
+          }
+        }
+      },
+      "FinanceTransactionListOperation": {
+        "type": "object",
+        "properties": {
+          "accruals_for_sale": {
+            "format": "double",
+            "type": "number",
+            "description": "Стоимость товаров с учётом скидок продавца."
+          },
+          "amount": {
+            "format": "double",
+            "type": "number",
+            "description": "Итоговая сумма операции."
+          },
+          "delivery_charge": {
+            "format": "double",
+            "type": "number",
+            "description": "Стоимость доставки для начислений по тарифам, которые действовали до 1 февраля 2021 года, а также начислений для крупногабаритных товаров."
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/OperationItem"
+            },
+            "type": "array",
+            "description": "Информация о товаре."
+          },
+          "operation_date": {
+            "type": "string",
+            "description": "Дата операции."
+          },
+          "operation_id": {
+            "format": "int64",
+            "type": "number",
+            "description": "Идентификатор операции."
+          },
+          "operation_type": {
+            "type": "string",
+            "description": "Тип операции."
+          },
+          "operation_type_name": {
+            "type": "string",
+            "description": "Название типа операции."
+          },
+          "posting": {
+            "$ref": "#/components/schemas/OperationPosting"
+          },
+          "return_delivery_charge": {
+            "format": "double",
+            "type": "number",
+            "description": "Плата за возвраты и отмены для начислений по тарифам, которые действовали до 1 февраля 2021 года, а также начислений для крупногабаритных товаров."
+          },
+          "sale_commission": {
+            "format": "double",
+            "type": "number",
+            "description": "Комиссия за продажу или возврат комиссии за продажу."
+          },
+          "services": {
+            "items": {
+              "$ref": "#/components/schemas/OperationService"
+            },
+            "type": "array",
+            "description": "Дополнительные услуги."
+          },
+          "type": {
+            "type": "string",
+            "description": "Тип начисления:\n- `all` — все,\n- `orders` — заказы,\n- `returns` — возвраты и отмены,\n- `services` — сервисные сборы,\n- `compensation` — компенсация,\n- `transferDelivery` — стоимость доставки,\n- `other` — прочее.\n"
+          }
+        }
+      },
+      "FinanceTransactionListReport": {
+        "type": "object",
+        "properties": {
+          "operations": {
+            "items": {
+              "$ref": "#/components/schemas/FinanceTransactionListOperation"
+            },
+            "type": "array",
+            "description": "Информация об операциях."
+          },
+          "page_count": {
+            "format": "int64",
+            "type": "number",
+            "description": "Количество страниц."
+          },
+          "row_count": {
+            "format": "int64",
+            "type": "number",
+            "description": "Количество товаров."
+          }
+        },
+        "description": "Результаты запроса."
+      },
+      "GetFinanceTransactionListReportResponse": {
+        "$ref": "#/components/schemas/FinanceTransactionListReport"
+      },
+      "FinanceTransactionListAllReport": {
+        "type": "object",
+        "properties": {
+          "operations": {
+            "items": {
+              "$ref": "#/components/schemas/FinanceTransactionListOperation"
+            },
+            "type": "array",
+            "description": "Информация об операциях."
+          }
+        },
+        "description": "Результаты запроса."
+      },
+      "GetFinanceTransactionListAllReportResponse": {
+        "$ref": "#/components/schemas/FinanceTransactionListAllReport"
+      },
+      "FinanceTransactionTotalsReport": {
+        "type": "object",
+        "properties": {
+          "accruals_for_sale": {
+            "format": "double",
+            "type": "number",
+            "description": "Общая стоимость товаров и возвратов в заданный период."
+          },
+          "compensation_amount": {
+            "format": "double",
+            "type": "number",
+            "description": "Компенсации."
+          },
+          "money_transfer": {
+            "format": "double",
+            "type": "number",
+            "description": "Начисления за доставку и возвраты при работе по схеме «Доставка по выбору продавца»."
+          },
+          "others_amount": {
+            "format": "double",
+            "type": "number",
+            "description": "Прочие начисления."
+          },
+          "processing_and_delivery": {
+            "format": "double",
+            "type": "number",
+            "description": "Стоимость услуг обработки отправлений, сборки заказов, магистрали и последней мили, а также доставки до введения новых комиссий и тарифов с 1 февраля 2021 года.\n\nМагистраль — доставка товаров между кластерами.\n\nПоследняя миля — доставка товаров покупателю в пункт выдачи заказов, постамат или курьером.\n"
+          },
+          "refunds_and_cancellations": {
+            "format": "double",
+            "type": "number",
+            "description": "Стоимость обратной магистрали, обработки возвратов, отмен и невыкупа товара, а также возвратов до введения новых комиссий и тарифов с 1 февраля 2021 года.\n\nМагистраль — доставка товаров между кластерами.\n\nПоследняя миля — доставка товаров покупателю в пункт выдачи заказов, постамат или курьером.\n"
+          },
+          "sale_commission": {
+            "format": "double",
+            "type": "number",
+            "description": "Сумма комиссии, которая была удержана при продаже товара и возвращена при его возврате."
+          },
+          "services_amount": {
+            "format": "double",
+            "type": "number",
+            "description": "Стоимость дополнительных услуг, не связанных напрямую с доставками и возвратами товаров. Например, продвижения или размещения товаров."
+          }
+        },
+        "description": "Результаты запроса."
+      },
+      "GetFinanceTransactionTotalsReportResponse": {
+        "$ref": "#/components/schemas/FinanceTransactionTotalsReport"
+      },
+      "FinanceOverviewReport": {
+        "type": "object",
+        "properties": {}
+      },
+      "GetFinanceOverviewReportResponse": {
+        "$ref": "#/components/schemas/FinanceOverviewReport"
+      }
+    }
+  }
+}

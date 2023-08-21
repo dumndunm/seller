@@ -3,17 +3,23 @@ import {
   HTTPMethodEnum,
   type DefaultRequestShapeT,
   type RequestT,
-} from '@/lib/api/fetch/request';
+} from '../fetch/request';
 // import { checkIsNotAuthorizedError } from '@/lib/api/proxy-api/errors';
 // import { NotAuthorizedErrorCodeEnum } from '@/lib/api/proxy-api/models';
 
 // import type { ApiAuthProviderI } from '../auth-providers/base-interface';
-import { doFetch } from '@/lib/api/fetch/do-fetch';
-import type { ApiResponseT } from '@/lib/api/fetch/response';
+import { doFetch } from '../fetch/do-fetch';
+import type { ApiResponseT } from '../fetch/response';
 
 import type {
+  GetFinanceRealizationReportQueryT,
+  GetFinanceRealizationReportResponseT,
+  GetFinanceTransactionListReportQueryT,
+  GetFinanceTransactionListReportResponseT,
+  GetFinanceTransactionListAllReportQueryT,
+  GetFinanceTransactionListAllReportResponseT,
   GetFinanceTransactionTotalsReportQueryT,
-  GetFinanceTransactionTotalsReportResultT,
+  GetFinanceTransactionTotalsReportResponseT,
 } from './models';
 
 const DEFAULT_TIMEOUT = 30 * 1000;
@@ -66,21 +72,71 @@ class ProxyServerApi {
     return response;
   };
 
-  getFinanceTransactionTotalsReport = async (
-    query: GetFinanceTransactionTotalsReportQueryT
-  ): Promise<GetFinanceTransactionTotalsReportResultT> => {
-    const { error, data } =
-      await this.doFetch<GetFinanceTransactionTotalsReportResultT>({
+  getFinancerealizationReport = async (
+    query: GetFinanceRealizationReportQueryT
+  ): Promise<GetFinanceRealizationReportResponseT> => {
+    const response = await this.doFetch<GetFinanceRealizationReportResponseT>({
+      method: HTTPMethodEnum.get,
+      url: '/reports/finance/realization',
+      query,
+    });
+
+    if (response.error) {
+      throw new Error(response.error.message);
+    }
+
+    return response.data;
+  };
+
+  getFinanceTransactionListReport = async (
+    query: GetFinanceTransactionListReportQueryT
+  ): Promise<GetFinanceTransactionListReportResponseT> => {
+    const response =
+      await this.doFetch<GetFinanceTransactionListReportResponseT>({
         method: HTTPMethodEnum.get,
-        url: '/reports/finance/totals',
+        url: '/reports/finance/transaction/list',
         query,
       });
 
-    if (error) {
-      throw new Error(error.message);
+    if (response.error) {
+      throw new Error(response.error.message);
     }
 
-    return data;
+    return response.data;
+  };
+
+  getFinanceTransactionListAllReport = async (
+    query: GetFinanceTransactionListAllReportQueryT
+  ): Promise<GetFinanceTransactionListAllReportResponseT> => {
+    const response =
+      await this.doFetch<GetFinanceTransactionListAllReportResponseT>({
+        method: HTTPMethodEnum.get,
+        url: '/reports/finance/transaction/list/all',
+        query,
+      });
+
+    if (response.error) {
+      throw new Error(response.error.message);
+    }
+
+    return response.data;
+  };
+
+  getFinanceTransactionTotalsReport = async (
+    query: GetFinanceTransactionTotalsReportQueryT
+  ): Promise<GetFinanceTransactionTotalsReportResponseT> => {
+    const response =
+      await this.doFetch<GetFinanceTransactionTotalsReportResponseT>({
+        method: HTTPMethodEnum.get,
+        url: '/reports/finance/transaction/totals',
+        query,
+      });
+
+    if (response.error) {
+      throw new Error(response.error.message);
+    }
+
+    return response.data;
   };
 }
 

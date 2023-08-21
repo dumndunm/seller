@@ -5,3 +5,5 @@ type ReactElement = React.ReactElement;
 
 type PropsWithChildren<P extends DefaultObjectShapeT = unknown> =
   React.PropsWithChildren<P>;
+
+type ComponentType<P = {}> = React.ComponentType<P>;

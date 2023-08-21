@@ -12,6 +12,10 @@ import { doFetch } from '@/lib/api/fetch/do-fetch';
 import type { ApiResponseT } from '@/lib/api/fetch/response';
 
 import type {
+  GetFinanceRealizationReportDataT,
+  GetFinanceRealizationReportResultT,
+  GetFinanceTransactionListReportDataT,
+  GetFinanceTransactionListReportResultT,
   GetFinanceTransactionTotalsReportDataT,
   GetFinanceTransactionTotalsReportResultT,
 } from './models';
@@ -66,6 +70,50 @@ class OzonSellerApi {
     return response;
   };
 
+  getFinanceRealizationReport = async (
+    body: GetFinanceRealizationReportDataT
+  ): Promise<GetFinanceRealizationReportResultT> => {
+    const { error, data } =
+      await this.doFetch<GetFinanceRealizationReportResultT>({
+        method: HTTPMethodEnum.post,
+        url: '/v1/finance/realization',
+        data: body,
+        headers: {
+          'client-id': '250423',
+          'api-key': 'a11256e3-5a0b-44c6-9382-3178453a7aa6',
+        },
+      });
+
+    if (error) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+
+    return data;
+  };
+
+  getFinanceTransactionListReport = async (
+    body: GetFinanceTransactionListReportDataT
+  ): Promise<GetFinanceTransactionListReportResultT> => {
+    const { error, data } =
+      await this.doFetch<GetFinanceTransactionListReportResultT>({
+        method: HTTPMethodEnum.post,
+        url: '/v3/finance/transaction/list',
+        data: body,
+        headers: {
+          'client-id': '250423',
+          'api-key': 'a11256e3-5a0b-44c6-9382-3178453a7aa6',
+        },
+      });
+
+    if (error) {
+      console.log(error);
+      throw new Error(error.message);
+    }
+
+    return data;
+  };
+
   getFinanceTransactionTotalsReport = async (
     body: GetFinanceTransactionTotalsReportDataT
   ): Promise<GetFinanceTransactionTotalsReportResultT> => {
@@ -81,6 +129,7 @@ class OzonSellerApi {
       });
 
     if (error) {
+      console.log(error);
       throw new Error(error.message);
     }
 

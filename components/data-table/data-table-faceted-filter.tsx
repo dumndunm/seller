@@ -1,6 +1,6 @@
-import * as React from 'react';
+import type { Column } from '@tanstack/react-table';
+
 import { CheckIcon, PlusCircledIcon } from '@radix-ui/react-icons';
-import { Column } from '@tanstack/react-table';
 
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -20,22 +20,27 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
+import { useI18n } from '@/lib/i18n/provider';
 
-interface DataTableFacetedFilter<TData, TValue> {
-  column?: Column<TData, TValue>;
+type DataTableFacetedFilterPropsT<TableDataShapeT> = {
+  column?: Column<TableDataShapeT>;
   title?: string;
   options: {
     label: string;
     value: string;
     icon?: React.ComponentType<{ className?: string }>;
   }[];
-}
+};
 
-export function DataTableFacetedFilter<TData, TValue>({
+export const DataTableFacetedFilter = <
+  TableDataShapeT extends DefaultObjectShapeT
+>({
   column,
   title,
   options,
-}: DataTableFacetedFilter<TData, TValue>) {
+}: DataTableFacetedFilterPropsT<TableDataShapeT>) => {
+  const i18n = useI18n();
+
   const facets = column?.getFacetedUniqueValues();
   const selectedValues = new Set(column?.getFilterValue() as string[]);
 
@@ -84,7 +89,7 @@ export function DataTableFacetedFilter<TData, TValue>({
         <Command>
           <CommandInput placeholder={title} />
           <CommandList>
-            <CommandEmpty>No results found.</CommandEmpty>
+            <CommandEmpty>{i18n.common.noResultsFound}</CommandEmpty>
             <CommandGroup>
               {options.map((option) => {
                 const isSelected = selectedValues.has(option.value);
@@ -134,7 +139,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                     onSelect={() => column?.setFilterValue(undefined)}
                     className="justify-center text-center"
                   >
-                    Clear filters
+                    {i18n.common.clearFilters}
                   </CommandItem>
                 </CommandGroup>
               </>
@@ -144,4 +149,4 @@ export function DataTableFacetedFilter<TData, TValue>({
       </PopoverContent>
     </Popover>
   );
-}
+};

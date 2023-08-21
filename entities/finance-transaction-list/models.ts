@@ -1,0 +1,3 @@
+export type FinanceTransactionListT = ProxyServerApiDefinitions.Components.Schemas.FinanceTransactionListReport;
+
+export type FinanceTransactionListOperationT = ProxyServerApiDefinitions.Components.Schemas.FinanceTransactionListOperation;

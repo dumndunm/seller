@@ -1,56 +1,64 @@
 'use client';
 
+import type { Table } from '@tanstack/react-table';
 import { Cross2Icon } from '@radix-ui/react-icons';
-import { Table } from '@tanstack/react-table';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-import { priorities, statuses } from './data/data';
+import type { DataTableMetaT } from '.';
 import { DataTableViewOptions } from './data-table-view-options';
 import { DataTableFacetedFilter } from './data-table-faceted-filter';
+import { useI18n } from '@/lib/i18n/provider';
 
-interface DataTableToolbarProps<TData> {
-  table: Table<TData>;
-}
+type DataTableToolbarPropsT<TableDataShapeT> = {
+  table: Table<TableDataShapeT>;
+};
 
-export function DataTableToolbar<TData>({
+export const DataTableToolbar = <TableDataShapeT extends DefaultObjectShapeT>({
   table,
-}: DataTableToolbarProps<TData>) {
+}: DataTableToolbarPropsT<TableDataShapeT>) => {
+  const i18n = useI18n();
+
   const isFiltered = table.getState().columnFilters.length > 0;
+
+  const meta = table.options.meta as DataTableMetaT | undefined;
 
   return (
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
-        <Input
-          placeholder="Filter tasks..."
-          value={(table.getColumn('title')?.getFilterValue() as string) ?? ''}
-          onChange={(event) =>
-            table.getColumn('title')?.setFilterValue(event.target.value)
-          }
-          className="h-8 w-[150px] lg:w-[250px]"
-        />
-        {table.getColumn('status') && (
-          <DataTableFacetedFilter
-            column={table.getColumn('status')}
-            title="Status"
-            options={statuses}
+        {meta && meta.searchBy && (
+          <Input
+            placeholder={i18n.common.search}
+            value={
+              (table.getColumn(meta.searchBy[0])?.getFilterValue() as string) ??
+              ''
+            }
+            onChange={(event) =>
+              table
+                .getColumn(meta.searchBy?.[0] ?? '')
+                ?.setFilterValue(event.target.value)
+            }
+            className="h-8 w-[150px] lg:w-[250px]"
           />
         )}
-        {table.getColumn('priority') && (
-          <DataTableFacetedFilter
-            column={table.getColumn('priority')}
-            title="Priority"
-            options={priorities}
-          />
-        )}
+        {meta &&
+          meta.facetedBy &&
+          meta.facetedBy.map(({ columnId, title, options }) => (
+            <DataTableFacetedFilter
+              key={columnId}
+              column={table.getColumn(columnId)}
+              title={title}
+              options={options}
+            />
+          ))}
         {isFiltered && (
           <Button
             variant="ghost"
             onClick={() => table.resetColumnFilters()}
             className="h-8 px-2 lg:px-3"
           >
-            Reset
+            {i18n.common.reset}
             <Cross2Icon className="ml-2 h-4 w-4" />
           </Button>
         )}
@@ -58,4 +66,4 @@ export function DataTableToolbar<TData>({
       <DataTableViewOptions table={table} />
     </div>
   );
-}
+};

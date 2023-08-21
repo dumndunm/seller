@@ -15,18 +15,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useI18n } from '@/lib/i18n/provider';
+import { ColumnDefMetaT } from '.';
 
-interface DataTableColumnHeaderProps<TData, TValue>
-  extends React.HTMLAttributes<HTMLDivElement> {
-  column: Column<TData, TValue>;
-  title: string;
-}
+type DataTableColumnHeaderPropsT<TableDataShapeT> = {
+  column: Column<TableDataShapeT>;
+  className?: string;
+};
 
-export function DataTableColumnHeader<TData, TValue>({
+export const DataTableColumnHeader = <
+  TableDataShapeT extends DefaultObjectShapeT
+>({
   column,
-  title,
   className,
-}: DataTableColumnHeaderProps<TData, TValue>) {
+}: DataTableColumnHeaderPropsT<TableDataShapeT>) => {
+  const i18n = useI18n();
+
+  const title = (column.columnDef.meta as ColumnDefMetaT).shortTitle;
+
   if (!column.getCanSort()) {
     return <div className={cn(className)}>{title}</div>;
   }
@@ -53,19 +59,19 @@ export function DataTableColumnHeader<TData, TValue>({
         <DropdownMenuContent align="start">
           <DropdownMenuItem onClick={() => column.toggleSorting(false)}>
             <ArrowUpIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-            Asc
+            {i18n.common.sorting_asc}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => column.toggleSorting(true)}>
             <ArrowDownIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-            Desc
+            {i18n.common.sorting_desc}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
             <EyeNoneIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
-            Hide
+            {i18n.common.hide}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
   );
-}
+};
