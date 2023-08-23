@@ -25,5 +25,10 @@
   "hide": "Hide",
   "sorting_asc": "Asc",
   "sorting_desc": "Desc",
-  "calendar_placeholder": "Pick a date"
+  "calendar_placeholder": "Pick a date",
+  "signIn": "Sign in",
+  "signOut": "Sign out",
+  "unknownUser": "Unknown user",
+  "unknownEmail": "Unknown email",
+  "userAvatar_alt": "User avatar"
 }

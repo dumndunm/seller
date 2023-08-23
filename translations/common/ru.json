@@ -25,5 +25,10 @@
   "hide": "Скрыть",
   "sorting_asc": "Убыв.",
   "sorting_desc": "Возр.",
-  "calendar_placeholder": "Выберите дату"
+  "calendar_placeholder": "Выберите дату",
+  "signIn": "Войти",
+  "signOut": "Выйти",
+  "unknownUser": "Неизвестный пользователь",
+  "unknownEmail": "Неизвестная почта",
+  "userAvatar_alt": "Аватар пользователя"
 }

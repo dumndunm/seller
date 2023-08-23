@@ -47,4 +47,4 @@ export const FinanceOverviewReportCalendarDateRangePicker: FC = () => {
 };
 
 FinanceOverviewReportCalendarDateRangePicker.displayName =
-  'OverviewReportCalendarDateRangePicker';
+  'FinanceOverviewReportCalendarDateRangePicker';

@@ -1,16 +1,13 @@
 'use client';
 
-import Link from 'next/link';
-import { useMemo } from 'react';
-import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/lib/i18n/provider';
+import { usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { useMemo } from 'react';
+import { SessionStatusEnum } from '@/entities/session/models';
 import { urlFactory } from '@/lib/url-factory';
-
-type LinkItemT = {
-  href: string;
-  children: ReactNode;
-};
+import Link from 'next/link';
 
 const createLinkCn = (isActive: boolean) =>
   cn(
@@ -23,8 +20,13 @@ export const Navigation: FC = () => {
 
   // @ts-expect-error
   const currentPathname: string = usePathname();
+  const session = useSession();
 
-  const data = useMemo((): Array<LinkItemT> => {
+  const data = useMemo(() => {
+    if (session.status !== SessionStatusEnum.authenticated) {
+      return [];
+    }
+
     return [
       {
         href: urlFactory.reportsPage(),
@@ -35,7 +37,7 @@ export const Navigation: FC = () => {
         children: i18n.common.navigation_settingsItem_title,
       },
     ];
-  }, [i18n]);
+  }, [i18n, session]);
 
   return (
     <nav className="flex items-center space-x-4 lg:space-x-6">

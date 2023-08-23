@@ -5,8 +5,13 @@ import { useQueryParams, StringParam } from 'use-query-params';
 import { FinanceOverviewReportQueriesEnum } from '@/entities/finance-overview-report/models';
 import { apiSlice } from '@/store/api/features/reports/api-slice';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-// prettier-ignore
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from '@/components/ui/card';
 import { Overview } from '@/components/overview';
 import { RecentSales } from '@/components/recent-sales';
 
@@ -28,8 +33,11 @@ export const FinanceOverviewReportDashboard: FC = () => {
   return (
     <Tabs>
       <TabsList>
-        <TabsTrigger value={'1'}>Test 1</TabsTrigger>
-        <TabsTrigger value={'2'}>Test 2</TabsTrigger>
+        {['product1', 'product2'].map((product) => (
+          <TabsTrigger key={product} value={product}>
+            {product}
+          </TabsTrigger>
+        ))}
       </TabsList>
       <TabsContent value="1">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

@@ -3,10 +3,18 @@ import Link from 'next/link';
 import type { RouterParamsT } from '@/lib/router';
 import { importI18nDict } from '@/lib/i18n/server';
 import { urlFactory } from '@/lib/url-factory';
-// prettier-ignore
-import { PageContainer, PageHeader, PageTitle, PageContent } from '@/components/page';
-// prettier-ignore
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import {
+  PageContainer,
+  PageHeader,
+  PageTitle,
+  PageContent,
+} from '@/components/page';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
 
 type ReportsPagePropsT = {
   params: RouterParamsT;

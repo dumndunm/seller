@@ -1,6 +1,6 @@
 import type {
+  QueryLifecycleApi,
   QueryFulfilledRejectionReason,
-  QueryLifecycleApi, // eslint-disable-next-line import/no-unresolved
 } from '@reduxjs/toolkit/dist/query/endpointDefinitions';
 
 type AnyQueryLifecycleApiT = QueryLifecycleApi<TODO, TODO, TODO>;
@@ -32,7 +32,7 @@ const createHandleQueryStarted = <Request = any, Response = any>(
 ) => {
   const { onBegin, onError, onSuccess } = params;
 
-  return async (query: TODO, api: QueryLifecycleApi<TODO, TODO, TODO>) => {
+  return async (query: TODO, api: AnyQueryLifecycleApiT) => {
     if (onBegin) {
       await onBegin(api, query);
     }

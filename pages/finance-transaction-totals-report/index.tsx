@@ -27,9 +27,9 @@ export default async function TransactionTotalsReportPage({
             {i18nDict.common.pages_transactionTotalsReport_description}
           </PageDescription>
         </div>
+        <FinanceTransactionTotalsCalendarDateRangePicker />
       </PageHeader>
       <PageContent>
-        <FinanceTransactionTotalsCalendarDateRangePicker />
         <FinanceTransactionTotalsDataTable />
       </PageContent>
     </PageContainer>
