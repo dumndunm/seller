@@ -1,0 +1,29 @@
+{
+  "reports_financeRealization_title": "Report on the sale of goods",
+  "reports_financeRealization_description": "Report on the sale of delivered and returned goods for the month. Cancellations and non-purchases are not included.",
+
+  "reports_financeTransactionList_title": "List of transactions",
+  "reports_financeTransactionList_description": "Returns detailed information on all charges.",
+
+  "reports_financeTransactionTotals_title": "Transaction totals",
+  "reports_financeTransactionTotals_description": "Returns the totals of transactions for the specified period.",
+  "reports_financeTransactionTotals_columns_accruals_for_sale": "Total cost of goods and refunds in a given period.",
+  "reports_financeTransactionTotals_columns_accruals_for_sale_short": "Total cost of goods and refunds",
+  "reports_financeTransactionTotals_columns_sale_commission": "The amount of the commission that was withheld when the product was sold and returned when it was returned.",
+  "reports_financeTransactionTotals_columns_sale_commission_short": "Commission amount",
+  "reports_financeTransactionTotals_columns_processing_and_delivery": "Cost of services for processing shipments, order assembly, highway and last mile.",
+  "reports_financeTransactionTotals_columns_processing_and_delivery_short": "Cost of services",
+  "reports_financeTransactionTotals_columns_refunds_and_cancellations": "The cost of the return trunk, processing refunds, cancellations and non-purchase of goods.",
+  "reports_financeTransactionTotals_columns_refunds_and_cancellations_short": "The cost of the return trunk",
+  "reports_financeTransactionTotals_columns_services_amount": "The cost of additional services not related directly with deliveries and returns of goods.",
+  "reports_financeTransactionTotals_columns_services_amount_short": "Cost of additional services",
+  "reports_financeTransactionTotals_columns_compensation_amount": "Compensations.",
+  "reports_financeTransactionTotals_columns_compensation_amount_short": "Compensations",
+  "reports_financeTransactionTotals_columns_money_transfer": "Charges for delivery and refunds when working under the scheme \"Delivery at the seller's choice\".",
+  "reports_financeTransactionTotals_columns_money_transfer_short": "\"Delivery at the seller's choice\"",
+  "reports_financeTransactionTotals_columns_others_amount": "Other charges.",
+  "reports_financeTransactionTotals_columns_others_amount_short": "Other charges",
+
+  "reports_financeOverview_title": "Summary financial report",
+  "reports_financeOverview_description": "Contains the final financial component, including net profit."
+}

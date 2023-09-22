@@ -1,0 +1,29 @@
+{
+  "reports_financeRealization_title": "Отчёт о реализации товаров",
+  "reports_financeRealization_description": "Отчёт о реализации доставленных и возвращённых товаров за месяц. Отмены и невыкупы не включаются.",
+
+  "reports_financeTransactionList_title": "Список транзакций",
+  "reports_financeTransactionList_description": "Возвращает подробную информацию по всем начислениям.",
+
+  "reports_financeTransactionTotals_title": "Суммы транзакций",
+  "reports_financeTransactionTotals_description": "Возвращает итоговые суммы по транзакциям за указанный период.",
+  "reports_financeTransactionTotals_columns_accruals_for_sale": "Общая стоимость товаров и возвратов в заданный период.",
+  "reports_financeTransactionTotals_columns_accruals_for_sale_short": "Общая стоимость товаров и возвратов",
+  "reports_financeTransactionTotals_columns_sale_commission": "Сумма комиссии, которая была удержана при продаже товара и возвращена при его возврате.",
+  "reports_financeTransactionTotals_columns_sale_commission_short": "Сумма комиссии",
+  "reports_financeTransactionTotals_columns_processing_and_delivery": "Стоимость услуг обработки отправлений, сборки заказов, магистрали и последней мили.",
+  "reports_financeTransactionTotals_columns_processing_and_delivery_short": "Стоимость услуг",
+  "reports_financeTransactionTotals_columns_refunds_and_cancellations": "Стоимость обратной магистрали, обработки возвратов, отмен и невыкупа товара.",
+  "reports_financeTransactionTotals_columns_refunds_and_cancellations_short": "Стоимость обратной магистрали",
+  "reports_financeTransactionTotals_columns_services_amount": "Стоимость дополнительных услуг, не связанных напрямую с доставками и возвратами товаров.",
+  "reports_financeTransactionTotals_columns_services_amount_short": "Стоимость дополнительных услуг",
+  "reports_financeTransactionTotals_columns_compensation_amount": "Компенсации.",
+  "reports_financeTransactionTotals_columns_compensation_amount_short": "Компенсации",
+  "reports_financeTransactionTotals_columns_money_transfer": "Начисления за доставку и возвраты при работе по схеме «Доставка по выбору продавца».",
+  "reports_financeTransactionTotals_columns_money_transfer_short": "«Доставка по выбору продавца»",
+  "reports_financeTransactionTotals_columns_others_amount": "Прочие начисления.",
+  "reports_financeTransactionTotals_columns_others_amount_short": "Прочие начисления",
+
+  "reports_financeOverview_title": "Сводный финансовый отчет",
+  "reports_financeOverview_description": "Содержит итоговую финансовую составляющую, в том числе чистую прибыль."
+}
